@@ -20,3 +20,4 @@ Route::resource('arma/calibre', 'CalibreController');
 Route::resource('arma/tipo', 'TipoController');
 Route::resource('arma/modelo', 'ModeloController');
 Route::resource('arma/arma', 'ArmaController');
+Route::resource('cautela', 'CautelaController');

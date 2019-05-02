@@ -1,19 +1,16 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use App\Arma;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ArmaFormRequest;
 use DB;
-
+use App\Situacao;
 class ArmaController extends Controller
 {
     public function __construct(){
         //
     }
-
     public function index(Request $request){
         
         if($request){
@@ -44,9 +41,8 @@ class ArmaController extends Controller
                 "searchText" => $query
             ]);
         }
-
     }
-
+    
     public function create(){
         $situacoes = DB::table('situacao')
                         ->where('isActive',1)
@@ -87,7 +83,6 @@ class ArmaController extends Controller
         $arma->idModelo = intval($request->get('idModelo'));
                 
         $arma->save();
-
         return Redirect::to('arma/arma');
     }
 
@@ -97,7 +92,6 @@ class ArmaController extends Controller
     }
 
     public function edit($id){
-
         $arma = Arma::findOrFail($id);
         $situacoes = DB::table('situacao')
                         ->where('isActive',1)
@@ -118,15 +112,13 @@ class ArmaController extends Controller
                             't.descricao as descricaoTipo',
                             'f.descricao as descricaoFabricante',
                             'c.descricao as descricaoCalibre'
-                        )
-                        ->where('m.descricao', 'LIKE', "%".$query.'%')
+                        )                        
                         ->where('m.isActive', 1)
-                        ->orderBy('m.descricaoTipo', 'asc')
-                        ->orderBy('m.descricaoFabricante', 'asc')
-                        ->orderBy('m.descricaoCalibre', 'asc')
+                        ->orderBy('t.descricao', 'asc')
+                        ->orderBy('f.descricao', 'asc')
+                        ->orderBy('c.descricao', 'asc')
                         ->orderBy('m.descricao', 'asc')
                         ->get();
-
         return view("arma.arma.edit", 
             [
                 "arma" => $arma,
@@ -136,20 +128,20 @@ class ArmaController extends Controller
         );
     }
 
-    public function update(ModeloFormRequest $request, $id){
+    public function update(ArmaFormRequest $request, $id){
         $arma = Arma::findOrFail($id);
         
         $arma->numeroSerie = $request->get('numeroSerie');        
         $arma->idSituacao = intval($request->get('idSituacao'));
         $arma->idModelo = intval($request->get('idModelo'));
-
         $arma->update();
         return Redirect::to('arma/arma');
     }
 
     public function destroy($id){
         $arma = Arma::findOrFail($id);
-        $arma->idSituacao = 2;
+        $manutencao = Situacao::where('descricao', 'Em manutenção')->first();
+        $arma->idSituacao = $manutencao->id;
         $arma->update();
         //Caso queira realmente deletar o registro do banco, use o método DELETE()
         //$modelo->delete();

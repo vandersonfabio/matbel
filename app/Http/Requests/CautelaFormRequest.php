@@ -13,7 +13,7 @@ class CautelaFormRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,14 @@ class CautelaFormRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'data'=>'required|max:10',
+            'validade'=>'max:10',
+            'qtdMunicao'=>'required|numeric',
+            'qtdCarregador'=>'required|numeric',
+            'observacao'=>'required|max:250',
+            'idArma'=>'required',
+            'idRequerente'=>'required',
+            'idSignatario'=>'required'
         ];
     }
 }
